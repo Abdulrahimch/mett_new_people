@@ -19,7 +19,7 @@ function Home (): JSX.Element {
                 <Grid item className={gridItem}>
                     <Grid container justify="space-evenly">
                         <Grid item>
-                            <CustomButton btnText="Meet new People" style='chat' linkTo='/' />
+                            <CustomButton btnText="Meet new People" style='chat' linkTo='/chat' />
                         </Grid>
                         <Grid item>
                             <CustomButton btnText="sign in" style='chat' linkTo='/login'/>
