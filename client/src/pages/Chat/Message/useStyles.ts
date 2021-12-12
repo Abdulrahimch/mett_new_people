@@ -3,6 +3,9 @@ import { makeStyles } from "@material-ui/core/styles";
 const useStyles = makeStyles((theme) => ({
     root: {
         marginTop: '0.5em',
+        '&.own': {
+            justifyContent: "flex-end",
+        }
     },
     img: {
         marginRight: '0.5em'
@@ -13,11 +16,15 @@ const useStyles = makeStyles((theme) => ({
         borderRadius: '20px',
         color: '#FFFFFF',
         maxWidth: '300px',
-        wordWrap: "break-word"
+        wordWrap: "break-word",
+        '&.own': {
+            backgroundColor: '#708090',
+            color: "#000000"
+        }
     },
-    itemContainer: {
-
-    }
+    messageBottom: {
+        fontSize: 12,
+   }
 }));
 
 export default useStyles;
