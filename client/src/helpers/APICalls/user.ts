@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { User } from '../../interfaces/User';
-import { AuthApiData } from '../../interfaces/AuthApiData';
+import { User } from '../../interface/User';
+import { AuthApiData } from '../../interface/AuthApiData';
 
 export const register = async (inputs: User ): Promise<AuthApiData>=> {
     return axios.post('/auth/register', inputs)

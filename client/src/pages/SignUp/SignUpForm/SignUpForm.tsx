@@ -3,7 +3,7 @@ import CustomButton from '../../../components/CustomButton/CustomButton';
 import useStyles from './useStyles';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { User } from '../../../interfaces/User';
+import { User } from '../../../interface/User';
 
 interface Props {
     handleSubmit: (inputs: User) => void
