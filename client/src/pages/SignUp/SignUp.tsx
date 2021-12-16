@@ -2,7 +2,7 @@ import { Grid, Box, Typography, Paper } from '@material-ui/core';
 import { register } from '../../helpers/APICalls/user';
 import SignUpForm from './SignUpForm/SignUpForm';
 import useStyles from './useStyles';
-import { User } from '../../interfaces/User';
+import { User } from '../../interface/User';
 
 function SignUp(): JSX.Element {
     const { root, welcome } = useStyles();
