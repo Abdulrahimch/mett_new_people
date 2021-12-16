@@ -10,3 +10,13 @@ export const register = async (inputs: User ): Promise<AuthApiData>=> {
             }));
 };
 
+export const login = async (inputs: User): Promise<AuthApiData> => {
+    return axios.post('/auth/login', inputs)
+            .then((res) => res.data)
+            .catch(() => ({
+                error: { message: 'Unable to connect to server. Please try again' },
+            }));
+};
+
+
+

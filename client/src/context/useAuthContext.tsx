@@ -43,10 +43,9 @@ export const AuthProvider: FunctionComponent = ({ children }): JSX.Element => {
       await loginWithCookies().then((data: AuthApiData) => {
         if (data.success) {
           updateLoginContext(data.success);
-          history.push('/');
+          history.push('/chat');
         } else {
           setLoggedInUser(null);
-          history.push('/login');
         }
       });
     };

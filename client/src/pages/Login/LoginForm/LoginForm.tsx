@@ -4,12 +4,15 @@ import * as Yup from 'yup';
 import CustomButton from '../../../components/CustomButton/CustomButton';
 import useStyles from './useStyles';
 import { Link } from 'react-router-dom';
+import { User } from '../../../interface/User';
 
-function LoginForm(): JSX.Element{
+interface Props {
+    handleSubmit: (inputs: User) => void;
+};
+
+function LoginForm({ handleSubmit }: Props): JSX.Element{
     const { inputs, inputLabel, link, caption } = useStyles();
-    const handleSubmit =  () => {
-        console.log('this is handleSubmit')
-    }
+
     return (
         <Formik
             initialValues={{ 
@@ -23,7 +26,7 @@ function LoginForm(): JSX.Element{
                   .max(100, 'Password is too long')
                   .min(6, 'Password too short'),
               })}
-            onSubmit={handleSubmit}
+            onSubmit={(values) => handleSubmit(values)}
         >
         {({handleSubmit, handleChange, values, touched, errors, isSubmitting}) => (
             <form onSubmit={handleSubmit} noValidate>
@@ -49,6 +52,7 @@ function LoginForm(): JSX.Element{
                 <TextField
                     id="password"
                     fullWidth
+                    type="password"
                     value={values.password}
                     onChange={handleChange}
                     placeholder="Password"
@@ -60,13 +64,13 @@ function LoginForm(): JSX.Element{
                       }}
                 />
                 <Box textAlign="center">
-                    <CustomButton btnText='Submit' style="submit" />
+                    <CustomButton btnText='Submit' style="submit" isSubmit={true}/>
                 </Box>
                 <Box textAlign="center">
                 <Typography className={caption}>
                     {"Don't have an account?"}
                     <Link className={link} to="/signup">
-                    Signup
+                        Signup
                     </Link>
               </Typography>
             </Box>

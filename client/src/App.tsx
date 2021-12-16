@@ -6,6 +6,7 @@ import SignUp from './pages/SignUp/SignUp';
 import AuthChat from './pages/Chat/AuthChat';
 import Header from './components/Header/Header';
 import { AuthProvider } from './context/useAuthContext';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 
 function App (): JSX.Element {
     return (
@@ -16,7 +17,7 @@ function App (): JSX.Element {
                         <Route exact path="/" component={Home} />
                         <Route exact path="/login" component={Login} />
                         <Route exact path="/signup" component={SignUp} />
-                        <Route exact path="/chat" component={AuthChat} />
+                        <ProtectedRoute exact path="/chat" component={AuthChat} />
                     </Switch>
             </AuthProvider>
         </BrowserRouter>
