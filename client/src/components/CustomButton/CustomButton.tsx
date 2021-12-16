@@ -1,5 +1,4 @@
 import { Button } from "@material-ui/core";
-import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import useStyles from './useStyles';
 
@@ -17,6 +16,7 @@ function CustomButton({ btnText, style, disabled, linkTo, isSubmit, onClick }: P
     const buttonStyle = clsx(button, style);
     return (
         <Button
+            href={linkTo}
             className={buttonStyle}
             onClick={onClick}
             type={isSubmit === true ? "submit" : 'button'}

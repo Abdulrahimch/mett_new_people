@@ -65,6 +65,7 @@ function SignUpForm({ handleSubmit }: Props): JSX.Element {
                     <TextField
                         id="password"
                         fullWidth
+                        type="password"
                         value={values.password}
                         onChange={handleChange}
                         placeholder="Password"

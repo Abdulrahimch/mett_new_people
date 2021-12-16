@@ -3,21 +3,22 @@ import { register } from '../../helpers/APICalls/user';
 import SignUpForm from './SignUpForm/SignUpForm';
 import useStyles from './useStyles';
 import { User } from '../../interface/User';
+import { useAuth } from '../../context/useAuthContext';
 
 function SignUp(): JSX.Element {
     const { root, welcome } = useStyles();
+    const { updateLoginContext } = useAuth();
 
     const handleSubmit = (inputs: User) => {
-        console.log('this is hiyyr ted just now')
-        console.log(inputs)
 
         register(inputs).then((data) => {
             if (data.error) {
-
+                console.log(data.error)
             } else if (data.success) {
-                console.log('registered successfully')
+                updateLoginContext(data.success);
             } else {
-                console.log('An unexpected error occurred. Please try again !')
+                console.log('An unexpected error occurred. Please try again !');
+                // updateSnackBarMessage('An unexpected error occurred. Please try again !');
             }
         })
     }
