@@ -1,46 +1,43 @@
-import { InputLabel, TextField, Box } from '@material-ui/core';
+import { InputLabel, TextField, Box, Button } from '@material-ui/core';
 import CustomButton from '../../../components/CustomButton/CustomButton';
 import useStyles from './useStyles';
-
 import { Formik } from 'formik';
 import * as Yup from 'yup';
+import { User } from '../../../interfaces/User';
 
-function SignUpForm(): JSX.Element {
+interface Props {
+    handleSubmit: (inputs: User) => void
+};
+
+function SignUpForm({ handleSubmit }: Props): JSX.Element {
     const { inputs, inputLabel, form } = useStyles();
-
-    const handleSubmit = () => {
-        console.log('ths is submit');
-    }
     return (
         <Formik
             initialValues={{
-                userName: '',
+                username: '',
                 email: '',
                 password: ''
             }}
             validationSchema={Yup.object().shape({
-                userName: Yup.string().required('username is required'),
-                email: Yup.string().required('Email is required').email('Email is not valid'),
-                password: Yup.string()
-                  .required('Password is required')
-                  .max(100, 'Password is too long')
-                  .min(6, 'Password too short'),
-              })}
-            onSubmit={handleSubmit}
+                username: Yup.string().required('Username is reqeuired!').min(3, 'Username is too short'),
+                email: Yup.string().required('email is reqeuired!').email('Please enter a valid email!'),
+                password: Yup.string().required('Password is requried!').min(5, 'Password is too short!')
+            })}
+            onSubmit={(values) => handleSubmit(values)}
         >
-            {({handleSubmit, handleChange, values, errors, touched}) => (
+            {({handleSubmit, handleChange, values, errors, touched,  isSubmitting}) => (
                 <form onSubmit={handleSubmit} className={form} noValidate>
                     <InputLabel className={inputLabel}>
                         username
                     </InputLabel>
                     <TextField
-                        id="userName"
+                        id="username"
                         fullWidth
-                        value={values.userName}
+                        value={values.username}
                         onChange={handleChange}
                         placeholder="username"
-                        helperText={touched.userName ? errors.userName : ''}
-                        error={touched.userName && Boolean(errors.userName)}
+                        helperText={errors.username}
+                        error={Boolean(errors.username)}
                         InputProps={{
                             classes: { input: inputs },
                             disableUnderline: true,
@@ -55,8 +52,8 @@ function SignUpForm(): JSX.Element {
                         value={values.email}
                         onChange={handleChange}
                         placeholder="email"
-                        helperText={touched.email ? errors.email : ''}
-                        error={touched.email && Boolean(errors.email)}
+                        helperText={errors.email}
+                        error={Boolean(errors.email)}
                         InputProps={{
                             classes: { input: inputs },
                             disableUnderline: true,
@@ -71,18 +68,19 @@ function SignUpForm(): JSX.Element {
                         value={values.password}
                         onChange={handleChange}
                         placeholder="Password"
-                        helperText={touched.password ? errors.password : ''}
-                        error={touched.password && Boolean(errors.password)}
+                        helperText={errors.password}
+                        error={Boolean(errors.password)}
                         InputProps={{
                             classes: { input: inputs },
                             disableUnderline: true,
                         }}
                     />
-                    <Box textAlign="center">
-                        <CustomButton btnText='SignUp' style="submit" />
+                    <Box textAlign='center'>
+                        <CustomButton btnText='SignUp' style="submit" isSubmit={true} />
                     </Box>
-                </form>
+                    </form>  
             )}
+            
 
         </Formik>
     )
