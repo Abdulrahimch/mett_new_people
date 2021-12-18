@@ -30,7 +30,8 @@ exports.getConversations = asyncHandler( async (req, res, next) => {
     const conversationOwner = req.params.id;
     const conversations = await Conversation.find({
         members: { $in: ObjectId(conversationOwner) }
-    });
+    })
+      .populate("members", "username imgUrl");
 
     if (conversations) {
         res.status(200).json({
