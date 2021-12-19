@@ -22,9 +22,6 @@ function AuthChat(): JSX.Element {
                                 }}
                             />
                             <Conversation />
-                            <Conversation />
-                            <Conversation />
-                            <Conversation />
                         </Box>
                         <Box className={chatBox}>
                             <Box className={chatBoxTop}>

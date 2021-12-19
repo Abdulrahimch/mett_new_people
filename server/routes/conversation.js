@@ -5,6 +5,6 @@ const { createConversation, getConversations } = require('../controllers/convers
 
 router.route("/").post(protect, createConversation);
 
-router.route("/:id").get(protect, getConversations);
+router.route("/").get(protect, getConversations);
 
 module.exports = router;

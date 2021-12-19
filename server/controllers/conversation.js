@@ -26,13 +26,12 @@ exports.createConversation = asyncHandler(async (req, res, next) => {
 // @route get /conversation/:id
 // @desc get all conversations
 // @access Private
-exports.getConversations = asyncHandler( async (req, res, next) => {
-    const conversationOwner = req.params.id;
+exports.getConversations = asyncHandler(async (req, res, next) => {
+    const conversationOwner = req.user.id;
     const conversations = await Conversation.find({
         members: { $in: ObjectId(conversationOwner) }
     })
       .populate("members", "username imgUrl");
-
     if (conversations) {
         res.status(200).json({
             success: {
