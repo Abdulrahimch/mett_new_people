@@ -3,9 +3,35 @@ import useStyles from './useStyles';
 import Conversation from './Conversation/Conversation';
 import Message from './Message/Message';
 import ChatOnline from './ChatOnline/ChatOnline';
+import { useState } from 'react';
+import { postMessage } from '../../helpers/APICalls/message';
+import { useAuth } from '../../context/useAuthContext';
+import { Imessage } from '../../interface/Message'; 
 
 function AuthChat(): JSX.Element {
     const { root, mainBox, chatMenu, chatBox, chatOnline, inputs, chatBoxTop, chatMessageInput, sendButton } = useStyles();
+    const [text, setText] = useState<string>('');
+    const { loggedInUser } = useAuth();
+
+    const handleSendChange = (event: any) => {
+        setText(event.target.value)
+    };
+
+    const onSendCLick = () => {
+        const inputs: Imessage = {
+            conversation: '', sender: loggedInUser?._id, text
+        };
+        postMessage(inputs).then((data) => {
+            if (data.error) {
+                console.log(data.error.message)
+            } else if (data.success) {
+                console.log(data.success)
+            } else {
+                console.log('Internal Error, try again later')
+            }
+        })
+    };
+
     return (
         <>
             <Grid container className={root}>
@@ -49,12 +75,14 @@ function AuthChat(): JSX.Element {
                                     maxRows={10}
                                     fullWidth={true}
                                     placeholder="Write something"
+                                    value={text}
+                                    onChange={handleSendChange}
                                     InputProps={{
                                         classes: { input: inputs },
                                         disableUnderline: true,
                                     }} 
                                 />
-                                <Button className={sendButton}>send</Button>
+                                <Button className={sendButton} onClick={onSendCLick}>send</Button>
                             </Box>
                         </Box>
                         <Box className={chatOnline}>
