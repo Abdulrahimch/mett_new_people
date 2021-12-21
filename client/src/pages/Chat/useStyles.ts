@@ -28,7 +28,8 @@ const useStyles = makeStyles((theme) => ({
     },
     chatBoxTop: {
         height: '100%',
-        overflowY: 'scroll'
+        overflowY: 'scroll',
+        position: 'relative'
     },
     chatOnline: {
         flex: 3,
@@ -51,7 +52,14 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: '#008000',
         borderRadius: 5,
         maxHeight: '40px'
-    }
+    },
+    noConversation: {
+        position: 'absolute',
+        top: '30%',
+        fontSize: '50px',
+        fontWeight: 700,
+        color: 'grey'
+    },
 }));
 
 export default useStyles;

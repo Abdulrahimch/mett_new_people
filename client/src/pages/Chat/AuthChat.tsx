@@ -3,15 +3,20 @@ import useStyles from './useStyles';
 import Conversation from './Conversation/Conversation';
 import Message from './Message/Message';
 import ChatOnline from './ChatOnline/ChatOnline';
-import { useState } from 'react';
-import { postMessage } from '../../helpers/APICalls/message';
+import { useEffect, useState, useRef } from 'react';
+import { postMessage, getAllMessages } from '../../helpers/APICalls/message';
 import { useAuth } from '../../context/useAuthContext';
-import { Imessage } from '../../interface/Message'; 
+import { Imessage } from '../../interface/Message';
+import { useConversation } from '../../context/useConversationContext'; 
 
 function AuthChat(): JSX.Element {
-    const { root, mainBox, chatMenu, chatBox, chatOnline, inputs, chatBoxTop, chatMessageInput, sendButton } = useStyles();
+    const { root, mainBox, chatMenu, chatBox, chatOnline, inputs, chatBoxTop, chatMessageInput, sendButton, noConversation } = useStyles();
     const [text, setText] = useState<string>('');
     const { loggedInUser } = useAuth();
+    const { currentConversation } = useConversation();
+    const [allMessages, setAllMessages] = useState<Imessage[]>([]);
+    const [updatedConversation, setUpdatedConversation] = useState<boolean>(false);
+    const scrollRef = useRef<HTMLInputElement>(null); 
 
     const handleSendChange = (event: any) => {
         setText(event.target.value)
@@ -19,18 +24,35 @@ function AuthChat(): JSX.Element {
 
     const onSendCLick = () => {
         const inputs: Imessage = {
-            conversation: '', sender: loggedInUser?._id, text
+            conversation: currentConversation?._id, sender: loggedInUser?.id, text
         };
         postMessage(inputs).then((data) => {
             if (data.error) {
-                console.log(data.error.message)
+                console.log(data.error.message);
+            } else if (data.success) {
+                setUpdatedConversation(!updatedConversation);
+                setText('');
+            } else {
+                console.log('Internal Error, try again later');
+            }
+        });
+    };
+
+    useEffect(() => {
+        const id = currentConversation?._id;
+        getAllMessages(id).then((data) => {
+            if (data.error) {
+                console.log(data.error.message);
             } else if (data.success) {
                 console.log(data.success)
+                setAllMessages(data.success.messages);
             } else {
-                console.log('Internal Error, try again later')
+                console.log('An unexpected error occurred. Please try again !');
             }
-        })
-    };
+        });
+        // scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [updatedConversation, currentConversation]);
+
 
     return (
         <>
@@ -50,23 +72,17 @@ function AuthChat(): JSX.Element {
                             <Conversation />
                         </Box>
                         <Box className={chatBox}>
-                            <Box className={chatBoxTop}>
-                                <Message />
-                                <Message ownerStyle='own'/>
-                                <Message ownerStyle='own'/>
-                                <Message />
-                                <Message />
-                                <Message />
-                                <Message ownerStyle='own'/>
-                                <Message ownerStyle='own'/>
-                                <Message />
-                                <Message />
-                                <Message />
-                                <Message ownerStyle='own'/>
-                                <Message ownerStyle='own'/>
-                                <Message />
-                                <Message />
-                            </Box>
+                            <div className={chatBoxTop} ref={scrollRef}>
+                                {currentConversation ? allMessages.map(({sender, text, createdAt}) => (
+                                <>
+                                    <Message 
+                                        ownerStyle={sender === loggedInUser?.id ? 'own' : ''} 
+                                        msg={text}
+                                        createdAt={createdAt}
+                                    />
+                                </>
+                                )) : <Box className={noConversation}>Tab to start a conversation</Box>}
+                            </div>
                             <Box className={chatMessageInput}>
                                 <TextField
                                     id="chatMessaageInput"

@@ -1,12 +1,15 @@
 import useStyles from './useStyles';
 import { Grid, Avatar, Typography, Box } from '@material-ui/core';
 import clsx from 'clsx';
+import { formatDistance } from "date-fns";
 
 interface Props {
     ownerStyle?: string;
+    msg: string;
+    createdAt: Date | undefined;
 }
 
-function Message({ ownerStyle }: Props): JSX.Element {
+function Message({ ownerStyle, msg, createdAt }: Props): JSX.Element {
     const { root, img, text, messageBottom } = useStyles();
     const textStyle = clsx(text, ownerStyle);
     const rootStyle = clsx(root, ownerStyle);
@@ -25,10 +28,10 @@ function Message({ ownerStyle }: Props): JSX.Element {
                                 paragraph={true} 
                                 className={textStyle}
                             >
-                                Hello dddddddia
+                                {msg}
                             </Typography>
                         </Box>
-                        <Box className={messageBottom}>1 hour ago</Box>
+                        <Box className={messageBottom}>{formatDistance(new Date(Date.now()), createdAt ? new Date(createdAt): new Date(Date.now()))}</Box>
                     </Box>
                 </Grid>
             </Grid>

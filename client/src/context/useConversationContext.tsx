@@ -3,8 +3,8 @@ import { createContext, FunctionComponent, useCallback, useContext, useEffect, u
 import { getConversations } from '../helpers/APICalls/conversation';
 
 interface IConversationContext {
-    conversations: Iconversation[];
-    currentConversation: Iconversation;
+    conversations: Iconversation[] | null | undefined;
+    currentConversation: Iconversation | null | undefined;
     updateConversationContext: (data: Iconversation[]) => void;
     updateCurrentConversation: (conversationContent: Iconversation) => void;
 };
@@ -47,4 +47,3 @@ export const ConversationProvider: FunctionComponent  = ({ children }): JSX.Elem
 export function useConversation(): IConversationContext {
     return useContext(ConversationContext);
 };
-
