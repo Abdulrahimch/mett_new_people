@@ -89,7 +89,7 @@ function AuthChat(): JSX.Element {
     }, [arrivalMessage, currentConversation]);
 
     useEffect(() => {
-        socket?.emit("addUser", loggedInUser?.id);
+        socket?.emit("addUser", { userId: loggedInUser?.id, username: loggedInUser?.username });
         socket?.on('getUsers', (users) => {
             setUsers(users);
             console.log(users)
@@ -144,13 +144,10 @@ function AuthChat(): JSX.Element {
                             </Box>
                         </Box>
                         <Box className={chatOnline}>
-                            <ChatOnline status='busy' />
-                            <ChatOnline status='busy' />
-                            <ChatOnline status='active' />
-                            <ChatOnline status='busy' />
-                            <ChatOnline status='active' />
-                            <ChatOnline status='active' />
-                            <ChatOnline status='out' />
+                            {users.filter((user: any) => { return user.userId !== loggedInUser?.id })
+                            .map((user) => (
+                                <ChatOnline status='active' user={user}/>
+                            ))}
                         </Box>
                     </Box>
                 </Grid>

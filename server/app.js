@@ -28,9 +28,9 @@ const io = socketio(server, {
 
 let users = [];
 
-const addUser = (userId, socketId) => {
+const addUser = (userId, username, socketId) => {
   !users.some((user) => user.userId === userId) &&
-    users.push({userId, socketId});
+    users.push({userId, username, socketId});
 };
 
 const removeUser = (socketId) => {
@@ -44,15 +44,13 @@ const getUser = (userId) => {
 
 io.on("connection", (socket) => {
   console.log("connected");
-  socket.on('addUser',(userId) => {
-    addUser(userId, socket.id);
+  socket.on('addUser',({ userId, username }) => {
+    addUser(userId, username  , socket.id);
     io.emit("getUsers", users);
   });
 
   socket.on('sendMessage', (senderId, receiverId, text) => {
-    console.log(senderId, receiverId, text)
     const user = getUser(receiverId);
-    console.log('user is: ', user)
     io.to(user.socketId).emit('getMessage', {
       senderId,
       text

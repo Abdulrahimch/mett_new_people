@@ -2,11 +2,18 @@ import { Grid, Avatar, Typography, Badge } from '@material-ui/core';
 import useStyles from './useStyles';
 import clsx from 'clsx';
 
-interface Props {
-    status?: string
+interface User {
+    username: string;
+    id: string;
 }
 
-function ChatOnline({ status }: Props): JSX.Element {
+interface Props {
+    status?: string,
+    user: User;
+}
+
+function ChatOnline({ status, user }: Props): JSX.Element {
+    console.log('user is: ', user)
     const { root, badge, avatar } = useStyles();
     const badgeStyle = clsx(badge, status);
     return (
@@ -21,7 +28,7 @@ function ChatOnline({ status }: Props): JSX.Element {
                     </Badge>
                 </Grid>
                 <Grid item> 
-                    <Typography> jonh Ahmed</Typography>
+                    <Typography>{user.username}</Typography>
                 </Grid>
             </Grid>
         </>
