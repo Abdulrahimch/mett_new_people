@@ -8,19 +8,22 @@ import Header from './components/Header/Header';
 import { AuthProvider } from './context/useAuthContext';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import { ConversationProvider } from './context/useConversationContext';
+import { SocketProvider } from './context/useSocketContext';
 
 function App (): JSX.Element {
     return (
         <BrowserRouter>
             <AuthProvider>
                 <ConversationProvider>
-                    <Header />
-                        <Switch>
-                            <Route exact path="/" component={Home} />
-                            <Route exact path="/login" component={Login} />
-                            <Route exact path="/signup" component={SignUp} />
-                            <ProtectedRoute exact path="/chat" component={AuthChat} />
-                        </Switch>
+                    <SocketProvider>
+                        <Header />
+                            <Switch>
+                                <Route exact path="/" component={Home} />
+                                <Route exact path="/login" component={Login} />
+                                <Route exact path="/signup" component={SignUp} />
+                                <ProtectedRoute exact path="/chat" component={AuthChat} />
+                            </Switch>
+                    </SocketProvider>
                 </ConversationProvider>
             </AuthProvider>
         </BrowserRouter>

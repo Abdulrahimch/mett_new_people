@@ -7,7 +7,8 @@ import { useEffect, useState, useRef } from 'react';
 import { postMessage, getAllMessages } from '../../helpers/APICalls/message';
 import { useAuth } from '../../context/useAuthContext';
 import { Imessage } from '../../interface/Message';
-import { useConversation } from '../../context/useConversationContext'; 
+import { useConversation } from '../../context/useConversationContext';
+import { useSocket } from '../../context/useSocketContext';
 
 function AuthChat(): JSX.Element {
     const { root, mainBox, chatMenu, chatBox, chatOnline, inputs, chatBoxTop, chatMessageInput, sendButton, noConversation } = useStyles();
@@ -16,26 +17,39 @@ function AuthChat(): JSX.Element {
     const { currentConversation } = useConversation();
     const [allMessages, setAllMessages] = useState<Imessage[]>([]);
     const [updatedConversation, setUpdatedConversation] = useState<boolean>(false);
-    const scrollRef = useRef<HTMLInputElement>(null); 
+    const [arrivalMessage, setArrivalMessage] = useState<any>(null);
+
+    const scrollRef = useRef<HTMLInputElement>(null);
+    const { socket, initSocket } = useSocket();
+    const [users, setUsers] = useState([])
 
     const handleSendChange = (event: any) => {
         setText(event.target.value)
     };
 
-    const onSendCLick = () => {
+    const getRecipient = () => {
+        return currentConversation?.members.filter((member) => member.id !== loggedInUser?.id)[0];
+    }
+
+    const onSendCLick = (event: React.MouseEvent) => {
+        event.preventDefault();
         const inputs: Imessage = {
             conversation: currentConversation?._id, sender: loggedInUser?.id, text
         };
+        const recipientId = getRecipient()?._id;
+        const senderId = loggedInUser?.id;
+        socket?.emit('sendMessage', senderId, recipientId, text);
+
         postMessage(inputs).then((data) => {
             if (data.error) {
                 console.log(data.error.message);
             } else if (data.success) {
-                setUpdatedConversation(!updatedConversation);
-                setText('');
+                setAllMessages([...allMessages, data.success.message]);
             } else {
                 console.log('Internal Error, try again later');
             }
         });
+        setText('');
     };
 
     useEffect(() => {
@@ -50,9 +64,37 @@ function AuthChat(): JSX.Element {
                 console.log('An unexpected error occurred. Please try again !');
             }
         });
-        // scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [updatedConversation, currentConversation]);
+        scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [currentConversation]);
 
+    useEffect(() => {
+        initSocket();
+        console.log('socket is is: ', socket);
+        socket?.on('getMessage', data => {
+            console.log('received msg from: ', data.senderId);
+            setArrivalMessage({
+                sender: data.senderId,
+                text: data.text,
+                createdAt: Date.now()
+            });
+        });
+    }, []);
+
+    useEffect(() => {
+        console.log('useEffect is hitted')
+        arrivalMessage
+            && currentConversation?.members.includes(arrivalMessage.senderId) &&
+            setAllMessages((prev) => [...prev, arrivalMessage]);
+        console.log('arrivalMessage is: ', arrivalMessage)
+    }, [arrivalMessage, currentConversation]);
+
+    useEffect(() => {
+        socket?.emit("addUser", loggedInUser?.id);
+        socket?.on('getUsers', (users) => {
+            setUsers(users);
+            console.log(users)
+        });
+    }, [socket, loggedInUser])
 
     return (
         <>
@@ -61,7 +103,7 @@ function AuthChat(): JSX.Element {
                     <Box className={mainBox}>
                         <Box className={chatMenu}>
                             <TextField
-                                id="search" 
+                                id="search"
                                 placeholder="Search"
                                 helperText="Search For Friends"
                                 InputProps={{
@@ -73,21 +115,21 @@ function AuthChat(): JSX.Element {
                         </Box>
                         <Box className={chatBox}>
                             <div className={chatBoxTop} ref={scrollRef}>
-                                {currentConversation ? allMessages.map(({sender, text, createdAt}) => (
-                                <>
-                                    <Message 
-                                        ownerStyle={sender === loggedInUser?.id ? 'own' : ''} 
-                                        msg={text}
-                                        createdAt={createdAt}
-                                    />
-                                </>
+                                {currentConversation ? allMessages.map(({ sender, text, createdAt }) => (
+                                    <>
+                                        <Message
+                                            ownerStyle={sender === loggedInUser?.id ? 'own' : ''}
+                                            msg={text}
+                                            createdAt={createdAt}
+                                        />
+                                    </>
                                 )) : <Box className={noConversation}>Tab to start a conversation</Box>}
                             </div>
                             <Box className={chatMessageInput}>
                                 <TextField
                                     id="chatMessaageInput"
                                     multiline={true}
-                                    rows={5}
+                                    minRows={5}
                                     maxRows={10}
                                     fullWidth={true}
                                     placeholder="Write something"
@@ -96,19 +138,19 @@ function AuthChat(): JSX.Element {
                                     InputProps={{
                                         classes: { input: inputs },
                                         disableUnderline: true,
-                                    }} 
+                                    }}
                                 />
-                                <Button className={sendButton} onClick={onSendCLick}>send</Button>
+                                <Button className={sendButton} onClick={(event) => onSendCLick(event)}>send</Button>
                             </Box>
                         </Box>
                         <Box className={chatOnline}>
-                            <ChatOnline status='busy'/>
-                            <ChatOnline status='busy'/>
-                            <ChatOnline status='active'/>
-                            <ChatOnline status='busy'/>
-                            <ChatOnline status='active'/>
-                            <ChatOnline status='active'/>
-                            <ChatOnline status='out'/>
+                            <ChatOnline status='busy' />
+                            <ChatOnline status='busy' />
+                            <ChatOnline status='active' />
+                            <ChatOnline status='busy' />
+                            <ChatOnline status='active' />
+                            <ChatOnline status='active' />
+                            <ChatOnline status='out' />
                         </Box>
                     </Box>
                 </Grid>

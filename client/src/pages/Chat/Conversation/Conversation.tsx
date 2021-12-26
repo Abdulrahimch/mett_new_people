@@ -1,4 +1,4 @@
-import { Grid, Avatar, Typography, Card, CardHeader, IconButton } from "@material-ui/core";
+import { Grid, Avatar, Typography } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import useStyles from "./useStyles";
 import { getConversations } from '../../../helpers/APICalls/conversation';
@@ -21,8 +21,6 @@ function Conversation(): JSX.Element {
         return members.filter((member) => member.username !== loggedInUser?.username)[0];
     };
 
-    console.log(' conversation componentni being rendered...')
-
     useEffect(() => {
         getConversations().then((data) => {
             if (data.error) {
@@ -40,8 +38,8 @@ function Conversation(): JSX.Element {
 
     return (
         <>
-            {conversations.map((conversation) => (
-            <Grid container className={container} onClick={() => onConversationClick(conversation)}>
+            {conversations.map((conversation, idx) => (
+            <Grid key={idx} container className={container} onClick={() => onConversationClick(conversation)}>
                 <Grid item>
                     <Avatar 
                         src="https://meetnewpeople.s3.amazonaws.com/img01.jpg" 

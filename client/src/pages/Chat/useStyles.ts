@@ -37,7 +37,8 @@ const useStyles = makeStyles((theme) => ({
     inputs: {
         border: '1px solid grey',
         borderRadius: 5,
-        width: '90%'
+        width: '90%',
+        padding: '1em'
 
     },
     chatMessageInput: {
